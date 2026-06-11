@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cadastro - CyberShield</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0b1220;
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+background:#111827;
+padding:20px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:2px solid #00c3ff;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#00c3ff;
+}
+
+nav{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+nav a{
+text-decoration:none;
+color:white;
+}
+
+main{
+display:flex;
+justify-content:center;
+padding:50px 20px;
+flex:1;
+}
+
+form{
+width:100%;
+max-width:700px;
+background:#111827;
+padding:30px;
+border-radius:12px;
+display:grid;
+gap:12px;
+}
+
+input{
+padding:12px;
+border:none;
+border-radius:8px;
+outline:none;
+}
+
+button{
+padding:14px;
+background:#00c3ff;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+footer{
+margin-top:auto;
+padding:20px;
+background:#111827;
+text-align:center;
+border-top:2px solid #00c3ff;
+}
+
+.erro{
+color:#ff6b6b;
+}
+
+small{
+font-size:13px;
+margin-top:-5px;
+margin-bottom:5px;
+}
+
+.valido{
+color:#66ff99;
+}
+
+.invalido{
+color:#ff6b6b;
+}
+
+.inputErro{
+outline:2px solid #ff6b6b;
+}
+
+.inputValido{
+outline:2px solid #66ff99;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+CyberShield
+</div>
+
+<nav>
+
+<a href="index.html">Início</a>
+<a href="servicos.html">Serviços</a>
+<a href="login.html">Login</a>
+
+</nav>
+
+</header>
+
+<main>
+
+<form id="cadastroForm">
+
+<h1>Cadastro</h1>
+
+<span id="msg" class="erro"></span>
+
+<input type="text" id="nome" placeholder="Nome Completo" required>
+
+<input type="text" id="cpf" placeholder="CPF" maxlength="14" required>
+<small id="cpfMsg"></small>
+
+<input type="text" id="cep" placeholder="CEP" maxlength="9" required>
+<small id="cepMsg"></small>
+
+<input type="text" id="endereco" placeholder="Endereço" readonly>
+<input type="text" id="bairro" placeholder="Bairro" readonly>
+<input type="text" id="cidade" placeholder="Cidade" readonly>
+<input type="text" id="uf" placeholder="UF" readonly>
+
+<input type="text" id="numero" placeholder="Número" required>
+
+<input type="text" id="complemento" placeholder="Complemento">
+
+<input type="password" id="senha" placeholder="Senha" required>
+
+<input type="password" id="confirmar" placeholder="Confirmar senha" required>
+
+<button>
+Cadastrar
+</button>
+
+</form>
+
+</main>
+
+<footer>
+
+CyberShield © 2026
+
+</footer>
+
+<script>
+
+const form = document.getElementById("cadastroForm");
+
+const cpfInput = document.getElementById("cpf");
+const cepInput = document.getElementById("cep");
+
+const cpfMsg = document.getElementById("cpfMsg");
+const cepMsg = document.getElementById("cepMsg");
+
+const msg = document.getElementById("msg");
+
+
+
+function validarCPF(cpf){
+
+cpf = cpf.replace(/\D/g,'');
+
+if(cpf.length !== 11)
+return false;
+
+if(/^(\d)\1+$/.test(cpf))
+return false;
+
+let soma = 0;
+
+for(let i=0;i<9;i++){
+
+soma += parseInt(cpf[i]) * (10-i);
+
+}
+
+let resto = (soma * 10) % 11;
+
+if(resto===10 || resto===11)
+resto=0;
+
+if(resto != cpf[9])
+return false;
+
+soma = 0;
+
+for(let i=0;i<10;i++){
+
+soma += parseInt(cpf[i]) * (11-i);
+
+}
+
+resto = (soma * 10) % 11;
+
+if(resto===10 || resto===11)
+resto=0;
+
+return resto == cpf[10];
+
+}
+
+
+
+cpfInput.addEventListener(
+"input",
+()=>{
+
+let valor =
+cpfInput.value.replace(/\D/g,'');
+
+valor =
+valor.replace(/(\d{3})(\d)/,"$1.$2");
+
+valor =
+valor.replace(/(\d{3})(\d)/,"$1.$2");
+
+valor =
+valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+cpfInput.value = valor;
+
+const limpo =
+valor.replace(/\D/g,'');
+
+if(limpo.length < 11){
+
+cpfMsg.innerText =
+"CPF incompleto";
+
+cpfMsg.className =
+"invalido";
+
+cpfInput.className =
+"inputErro";
+
+return;
+
+}
+
+if(validarCPF(valor)){
+
+cpfMsg.innerText =
+"CPF válido";
+
+cpfMsg.className =
+"valido";
+
+cpfInput.className =
+"inputValido";
+
+}else{
+
+cpfMsg.innerText =
+"CPF inválido";
+
+cpfMsg.className =
+"invalido";
+
+cpfInput.className =
+"inputErro";
+
+}
+
+}
+);
+
+
+
+cepInput.addEventListener(
+"input",
+()=>{
+
+let cep =
+cepInput.value.replace(/\D/g,'');
+
+cep =
+cep.replace(
+/(\d{5})(\d)/,
+"$1-$2"
+);
+
+cepInput.value =
+cep;
+
+const limpo =
+cep.replace(/\D/g,'');
+
+if(limpo.length < 8){
+
+cepMsg.innerText =
+"CEP incompleto";
+
+cepMsg.className =
+"invalido";
+
+cepInput.className =
+"inputErro";
+
+return;
+
+}
+
+buscarCEP(
+limpo
+);
+
+}
+);
+
+
+
+async function buscarCEP(cep){
+
+try{
+
+const resposta =
+await fetch(
+`https://viacep.com.br/ws/${cep}/json/`
+);
+
+const dados =
+await resposta.json();
+
+if(dados.erro){
+
+cepMsg.innerText =
+"CEP inválido";
+
+cepMsg.className =
+"invalido";
+
+return;
+
+}
+
+cepMsg.innerText =
+"CEP válido";
+
+cepMsg.className =
+"valido";
+
+cepInput.className =
+"inputValido";
+
+endereco.value =
+dados.logradouro || "";
+
+bairro.value =
+dados.bairro || "";
+
+cidade.value =
+dados.localidade || "";
+
+uf.value =
+dados.uf || "";
+
+}catch{
+
+cepMsg.innerText =
+"Erro ao buscar CEP";
+
+cepMsg.className =
+"invalido";
+
+}
+
+}
+
+
+
+form.addEventListener(
+"submit",
+(e)=>{
+
+e.preventDefault();
+
+msg.innerText="";
+
+if(
+
+cpfMsg.className !== "valido"
+
+||
+
+cepMsg.className !== "valido"
+
+){
+
+msg.innerText =
+"Corrija os campos inválidos";
+
+return;
+
+}
+
+const senha =
+document.getElementById(
+"senha"
+).value;
+
+const confirmar =
+document.getElementById(
+"confirmar"
+).value;
+
+if(
+senha !== confirmar
+){
+
+msg.innerText =
+"As senhas não coincidem";
+
+return;
+
+}
+
+const usuarios =
+JSON.parse(
+localStorage.getItem(
+"usuarios"
+)
+) || [];
+
+const cpf =
+cpfInput.value;
+
+if(
+usuarios.find(
+u=>u.cpf===cpf
+)
+){
+
+msg.innerText =
+"CPF já cadastrado";
+
+return;
+
+}
+
+const novoUsuario = {
+
+nome:
+nome.value,
+
+cpf,
+
+cep:
+cepInput.value,
+
+endereco:
+endereco.value,
+
+bairro:
+bairro.value,
+
+cidade:
+cidade.value,
+
+uf:
+uf.value,
+
+numero:
+numero.value,
+
+complemento:
+complemento.value,
+
+senha:
+senha
+
+};
+
+usuarios.push(
+novoUsuario
+);
+
+localStorage.setItem(
+
+"usuarios",
+
+JSON.stringify(
+usuarios
+)
+
+);
+
+
+
+localStorage.setItem(
+
+"usuarioLogado",
+
+JSON.stringify({
+
+nome:
+novoUsuario.nome,
+
+cpf:
+novoUsuario.cpf
+
+})
+
+);
+
+
+
+alert(
+"Cadastro realizado com sucesso!"
+);
+
+window.location =
+"index.html";
+
+});
+
+</script>
+
+</body>
+</html>
