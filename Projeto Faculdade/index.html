@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CyberShield - Início</title>
+
+    <!-- Arquivo de estilos compartilhado -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- Cabeçalho do site -->
+    <header>
+
+        <!-- A logo sempre retorna para a página inicial -->
+        <a href="index.html" class="logo">
+            CyberShield
+        </a>
+
+        <!-- Menu de navegação -->
+        <nav>
+
+            <a href="index.html">Início</a>
+
+            <a href="servicos.html">Serviços</a>
+
+            <!-- Páginas disponíveis apenas para usuários logados -->
+            <a href="dashboard.html" class="restricted">
+                Dashboard
+            </a>
+
+            <a href="relatorios.html" class="restricted">
+                Relatórios
+            </a>
+
+            <!-- Botões de acesso -->
+            <a href="login.html" id="loginBtn">
+                Login
+            </a>
+
+            <a href="cadastro.html" id="cadastroBtn">
+                Cadastro
+            </a>
+
+            <!-- Aparece somente quando o usuário estiver logado -->
+            <a href="conta.html" id="contaBtn" class="hidden">
+                Conta
+            </a>
+
+        </nav>
+
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main>
+
+        <!-- Apresentação da empresa -->
+        <section class="hero">
+
+            <div class="hero-text">
+
+                <h1>
+                    Proteja sua empresa contra ameaças digitais
+                </h1>
+
+                <p>
+                    A CyberShield oferece soluções de cibersegurança para pequenas empresas,
+                    ajudando a proteger dados, sistemas e informações importantes contra
+                    ataques virtuais.
+                </p>
+
+                <div class="buttons">
+
+                    <a href="cadastro.html" class="btn primary">
+                        Começar Agora
+                    </a>
+
+                    <a href="servicos.html" class="btn secondary">
+                        Conhecer Serviços
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Principais vantagens -->
+        <section class="card-area">
+
+            <div class="card">
+
+                <h3>
+                    Monitoramento 24h
+                </h3>
+
+                <p>
+                    Acompanhamento constante para identificar atividades suspeitas.
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>
+                    Proteção de Dados
+                </h3>
+
+                <p>
+                    Segurança para documentos, informações e dados sensíveis da empresa.
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>
+                    Consultoria Especializada
+                </h3>
+
+                <p>
+                    Orientação profissional para reduzir riscos e melhorar a segurança digital.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+
+        <p>
+            CyberShield © 2026 - Todos os direitos reservados
+        </p>
+
+    </footer>
+
+    <script>
+
+        // Verifica se existe um usuário logado
+        const usuarioLogado =
+            localStorage.getItem("usuarioLogado");
+
+        const loginBtn =
+            document.getElementById("loginBtn");
+
+        const cadastroBtn =
+            document.getElementById("cadastroBtn");
+
+        const contaBtn =
+            document.getElementById("contaBtn");
+
+        const restrictedLinks =
+            document.querySelectorAll(".restricted");
+
+        // Se existir sessão ativa
+        if (usuarioLogado) {
+
+            loginBtn.classList.add("hidden");
+            cadastroBtn.classList.add("hidden");
+
+            contaBtn.classList.remove("hidden");
+
+            restrictedLinks.forEach(link => {
+
+                link.classList.remove("disabled");
+
+            });
+
+        }
+
+        // Se for visitante
+        else {
+
+            restrictedLinks.forEach(link => {
+
+                link.classList.add("disabled");
+
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
