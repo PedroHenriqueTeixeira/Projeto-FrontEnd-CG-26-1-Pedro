@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CyberShield - Relatórios</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+        }
+
+        .filtros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filtro-btn {
+            background: #1f2937;
+            color: #d1d5db;
+            border: 1px solid #374151;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .filtro-btn:hover,
+        .filtro-btn.ativo {
+            background: #00c3ff;
+            color: black;
+            border-color: #00c3ff;
+        }
+
+        .relatorios-lista {
+            display: grid;
+            gap: 16px;
+        }
+
+        .relatorio-item {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            transition: border-color 0.3s;
+        }
+
+        .relatorio-item:hover {
+            border-color: #374151;
+        }
+
+        .relatorio-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .relatorio-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .relatorio-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .relatorio-meta span {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .relatorio-meta span strong {
+            color: #d1d5db;
+        }
+
+        .severidade {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .sev-baixa  { color: #4ade80; }
+        .sev-media  { color: #f59e0b; }
+        .sev-alta   { color: #f87171; }
+
+        .dot-baixa  { background: #4ade80; }
+        .dot-media  { background: #f59e0b; }
+        .dot-alta   { background: #f87171; }
+
+        .btn-ver {
+            background: transparent;
+            border: 1px solid #00c3ff;
+            color: #00c3ff;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-ver:hover {
+            background: #00c3ff;
+            color: black;
+        }
+
+        /* Modal */
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.aberto {
+            display: flex;
+        }
+
+        .modal {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 14px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            color: #00c3ff;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .modal .modal-meta {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 24px;
+        }
+
+        .modal-secao {
+            margin-bottom: 20px;
+        }
+
+        .modal-secao h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .modal-secao p {
+            font-size: 14px;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .modal-secao ul {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .modal-secao ul li {
+            font-size: 14px;
+            color: #d1d5db;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .modal-secao ul li::before {
+            content: "›";
+            position: absolute;
+            left: 0;
+            color: #00c3ff;
+        }
+
+        .modal-fechar {
+            width: 100%;
+            margin-top: 16px;
+            background: #1f2937;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .modal-fechar:hover {
+            background: #374151;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #6b7280;
+            padding: 60px 0;
+            font-size: 15px;
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <a href="index.html" class="logo">
+            CyberShield
+        </a>
+
+        <nav>
+
+            <a href="index.html">Início</a>
+
+            <a href="servicos.html">Serviços</a>
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="relatorios.html">Relatórios</a>
+
+            <a href="conta.html">Conta</a>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <div class="page-header">
+
+            <h1>Relatórios</h1>
+
+            <div class="filtros">
+
+                <button class="filtro-btn ativo" data-filtro="todos">
+                    Todos
+                </button>
+
+                <button class="filtro-btn" data-filtro="alta">
+                    Alta severidade
+                </button>
+
+                <button class="filtro-btn" data-filtro="media">
+                    Média
+                </button>
+
+                <button class="filtro-btn" data-filtro="baixa">
+                    Baixa
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="relatorios-lista" id="listaRelatorios"></div>
+
+        <div class="vazio" id="vazio">
+            Nenhum relatório encontrado para este filtro.
+        </div>
+
+    </main>
+
+    <!-- Modal de detalhes -->
+    <div class="modal-overlay" id="modalOverlay">
+
+        <div class="modal" id="modalConteudo">
+
+            <h2 id="modalTitulo"></h2>
+
+            <p class="modal-meta" id="modalMeta"></p>
+
+            <div class="modal-secao">
+                <h3>Descrição</h3>
+                <p id="modalDescricao"></p>
+            </div>
+
+            <div class="modal-secao">
+                <h3>Sistemas afetados</h3>
+                <ul id="modalSistemas"></ul>
+            </div>
+
+            <div class="modal-secao">
+                <h3>Ação recomendada</h3>
+                <p id="modalAcao"></p>
+            </div>
+
+            <button class="modal-fechar" id="modalFechar">
+                Fechar
+            </button>
+
+        </div>
+
+    </div>
+
+    <footer>
+
+        CyberShield © 2026
+
+    </footer>
+
+    <script>
+
+        const sessao =
+            JSON.parse(
+                localStorage.getItem("usuarioLogado")
+            );
+
+        if (!sessao) {
+
+            window.location = "login.html";
+
+        }
+
+        // Dados simulados dos relatórios
+
+        const relatorios = [
+
+            {
+                id: 1,
+                titulo: "Tentativa de acesso não autorizado",
+                data: "14/06/2026",
+                hora: "14:32",
+                tipo: "Intrusão",
+                severidade: "alta",
+                descricao: "Detectada tentativa de acesso via força bruta ao painel administrativo. O sistema bloqueou automaticamente o IP de origem após 5 tentativas falhas.",
+                sistemas: ["Painel administrativo", "Servidor web principal"],
+                acao: "O IP foi bloqueado automaticamente. Recomenda-se revisar as políticas de senha e ativar autenticação em dois fatores para o painel."
+            },
+
+            {
+                id: 2,
+                titulo: "Vulnerabilidade em dependência desatualizada",
+                data: "14/06/2026",
+                hora: "11:00",
+                tipo: "Vulnerabilidade",
+                severidade: "media",
+                descricao: "Varredura automática identificou uma biblioteca de terceiros com versão desatualizada contendo vulnerabilidade de execução remota de código (CVE-2025-8821).",
+                sistemas: ["Aplicação web interna", "API de integração"],
+                acao: "Atualize a dependência para a versão 4.2.1 ou superior. Caso não seja possível de imediato, aplique o patch de mitigação disponível no portal do fornecedor."
+            },
+
+            {
+                id: 3,
+                titulo: "Backup diário concluído com sucesso",
+                data: "14/06/2026",
+                hora: "03:00",
+                tipo: "Manutenção",
+                severidade: "baixa",
+                descricao: "Backup automático dos dados críticos realizado com sucesso. Total de 4,2 GB copiados para o armazenamento seguro em nuvem com criptografia AES-256.",
+                sistemas: ["Banco de dados principal", "Armazenamento em nuvem"],
+                acao: "Nenhuma ação necessária. Manter a rotina de backups ativa e verificar integridade mensalmente."
+            },
+
+            {
+                id: 4,
+                titulo: "Atualização de firewall aplicada",
+                data: "13/06/2026",
+                hora: "22:15",
+                tipo: "Atualização",
+                severidade: "baixa",
+                descricao: "Regras do firewall atualizadas com sucesso. Incluídas 12 novas assinaturas de ameaças identificadas globalmente na última semana.",
+                sistemas: ["Firewall de perímetro"],
+                acao: "Nenhuma ação necessária. Próxima atualização programada para 21/06/2026."
+            },
+
+            {
+                id: 5,
+                titulo: "Acesso de dispositivo não reconhecido",
+                data: "13/06/2026",
+                hora: "18:44",
+                tipo: "Acesso suspeito",
+                severidade: "media",
+                descricao: "Login realizado a partir de um dispositivo não reconhecido anteriormente. Localização geográfica diferente do padrão habitual do usuário.",
+                sistemas: ["Sistema de autenticação", "VPN corporativa"],
+                acao: "Confirme com o usuário se o acesso foi legítimo. Se não reconhecido, revogue a sessão e redefina a senha imediatamente."
+            },
+
+            {
+                id: 6,
+                titulo: "Varredura de rede concluída",
+                data: "12/06/2026",
+                hora: "06:00",
+                tipo: "Monitoramento",
+                severidade: "baixa",
+                descricao: "Varredura semanal de rede concluída sem anomalias. Todos os 23 dispositivos monitorados responderam normalmente aos testes de conectividade e integridade.",
+                sistemas: ["Rede interna", "Todos os endpoints"],
+                acao: "Nenhuma ação necessária. Próxima varredura agendada para 19/06/2026."
+            }
+
+        ];
+
+        const lista =
+            document.getElementById("listaRelatorios");
+
+        const vazio =
+            document.getElementById("vazio");
+
+        function renderizarLista(filtro) {
+
+            lista.innerHTML = "";
+
+            const filtrados =
+                filtro === "todos"
+                    ? relatorios
+                    : relatorios.filter(r => r.severidade === filtro);
+
+            if (filtrados.length === 0) {
+
+                vazio.style.display = "block";
+                return;
+
+            }
+
+            vazio.style.display = "none";
+
+            filtrados.forEach(r => {
+
+                const classSev =
+                    r.severidade === "alta" ? "sev-alta"
+                    : r.severidade === "media" ? "sev-media"
+                    : "sev-baixa";
+
+                const classDot =
+                    r.severidade === "alta" ? "dot-alta"
+                    : r.severidade === "media" ? "dot-media"
+                    : "dot-baixa";
+
+                const labelSev =
+                    r.severidade === "alta" ? "Alta"
+                    : r.severidade === "media" ? "Média"
+                    : "Baixa";
+
+                const item =
+                    document.createElement("div");
+
+                item.className = "relatorio-item";
+
+                item.innerHTML = `
+
+                    <div class="relatorio-info">
+
+                        <span class="relatorio-titulo">
+                            ${r.titulo}
+                        </span>
+
+                        <div class="relatorio-meta">
+
+                            <span>
+                                <strong>${r.data}</strong> às ${r.hora}
+                            </span>
+
+                            <span>Tipo: <strong>${r.tipo}</strong></span>
+
+                            <span class="severidade ${classSev}">
+                                <span class="dot ${classDot}"></span>
+                                ${labelSev}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <button class="btn-ver" data-id="${r.id}">
+                        Ver detalhes
+                    </button>
+
+                `;
+
+                lista.appendChild(item);
+
+            });
+
+            // Adiciona eventos aos botões de detalhe
+
+            document.querySelectorAll(".btn-ver").forEach(btn => {
+
+                btn.addEventListener("click", () => {
+
+                    const id =
+                        parseInt(btn.dataset.id);
+
+                    const relatorio =
+                        relatorios.find(r => r.id === id);
+
+                    abrirModal(relatorio);
+
+                });
+
+            });
+
+        }
+
+        // Filtros
+
+        document.querySelectorAll(".filtro-btn").forEach(btn => {
+
+            btn.addEventListener("click", () => {
+
+                document.querySelectorAll(".filtro-btn").forEach(b => {
+                    b.classList.remove("ativo");
+                });
+
+                btn.classList.add("ativo");
+
+                renderizarLista(btn.dataset.filtro);
+
+            });
+
+        });
+
+        // Modal
+
+        function abrirModal(r) {
+
+            document.getElementById("modalTitulo").innerText =
+                r.titulo;
+
+            document.getElementById("modalMeta").innerText =
+                `${r.data} às ${r.hora}  ·  Tipo: ${r.tipo}`;
+
+            document.getElementById("modalDescricao").innerText =
+                r.descricao;
+
+            const ul =
+                document.getElementById("modalSistemas");
+
+            ul.innerHTML = "";
+
+            r.sistemas.forEach(s => {
+
+                const li = document.createElement("li");
+                li.innerText = s;
+                ul.appendChild(li);
+
+            });
+
+            document.getElementById("modalAcao").innerText =
+                r.acao;
+
+            document.getElementById("modalOverlay").classList.add("aberto");
+
+        }
+
+        document.getElementById("modalFechar").addEventListener("click", () => {
+
+            document.getElementById("modalOverlay").classList.remove("aberto");
+
+        });
+
+        document.getElementById("modalOverlay").addEventListener("click", (e) => {
+
+            if (e.target === document.getElementById("modalOverlay")) {
+
+                document.getElementById("modalOverlay").classList.remove("aberto");
+
+            }
+
+        });
+
+        // Carrega lista inicial
+
+        renderizarLista("todos");
+
+    </script>
+
+</body>
+
+</html>
