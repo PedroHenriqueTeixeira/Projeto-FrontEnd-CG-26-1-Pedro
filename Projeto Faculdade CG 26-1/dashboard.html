@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CyberShield - Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 28px;
+        }
+
+        .status-badge {
+            background: #052e16;
+            border: 1px solid #16a34a;
+            color: #4ade80;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .resumo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .resumo-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .resumo-card .label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .resumo-card .valor {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .resumo-card .descricao {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+
+        .verde { color: #4ade80; }
+        .azul  { color: #00c3ff; }
+        .amarelo { color: #f59e0b; }
+        .vermelho { color: #f87171; }
+
+        .painel-duplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .painel-duplo {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .painel {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .painel h2 {
+            font-size: 16px;
+            color: #00c3ff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .evento {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #1f2937;
+            gap: 12px;
+        }
+
+        .evento:last-child {
+            border-bottom: none;
+        }
+
+        .evento-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .evento-titulo {
+            font-size: 14px;
+            color: white;
+        }
+
+        .evento-hora {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .tag-ok {
+            background: #052e16;
+            color: #4ade80;
+        }
+
+        .tag-aviso {
+            background: #451a03;
+            color: #f59e0b;
+        }
+
+        .tag-erro {
+            background: #450a0a;
+            color: #f87171;
+        }
+
+        .barra-linha {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .barra-item {
+            display: grid;
+            gap: 6px;
+        }
+
+        .barra-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #d1d5db;
+        }
+
+        .barra-fundo {
+            height: 8px;
+            background: #1f2937;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .barra-progresso {
+            height: 100%;
+            border-radius: 4px;
+            background: #00c3ff;
+        }
+
+        .aviso-banner {
+            background: #451a03;
+            border: 1px solid #f59e0b;
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #fde68a;
+        }
+
+        .aviso-banner span {
+            font-size: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <a href="index.html" class="logo">
+            CyberShield
+        </a>
+
+        <nav>
+
+            <a href="index.html">Início</a>
+
+            <a href="servicos.html">Serviços</a>
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="relatorios.html">Relatórios</a>
+
+            <a href="conta.html">Conta</a>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <div class="dashboard-header">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p style="color:#9ca3af; margin-top:4px; font-size:14px;">
+                    Bem-vindo, <span id="nomeUsuario"></span>
+                </p>
+            </div>
+
+            <span class="status-badge">● Sistema Ativo</span>
+
+        </div>
+
+        <div class="aviso-banner" id="avisoBanner" style="display:none;">
+
+            <span>⚠️</span>
+
+            <p>
+                1 vulnerabilidade de severidade média detectada na rede.
+                Acesse os <a href="relatorios.html" style="color:#fde68a;">Relatórios</a> para detalhes.
+            </p>
+
+        </div>
+
+        <!-- Cartões de resumo -->
+        <div class="resumo-grid">
+
+            <div class="resumo-card">
+                <div class="label">Ameaças Bloqueadas</div>
+                <div class="valor verde">147</div>
+                <div class="descricao">últimas 24 horas</div>
+            </div>
+
+            <div class="resumo-card">
+                <div class="label">Dispositivos Monitorados</div>
+                <div class="valor azul">23</div>
+                <div class="descricao">na sua rede</div>
+            </div>
+
+            <div class="resumo-card">
+                <div class="label">Vulnerabilidades</div>
+                <div class="valor amarelo">1</div>
+                <div class="descricao">aguardando correção</div>
+            </div>
+
+            <div class="resumo-card">
+                <div class="label">Nível de Proteção</div>
+                <div class="valor verde">94%</div>
+                <div class="descricao">acima da média do setor</div>
+            </div>
+
+        </div>
+
+        <div class="painel-duplo">
+
+            <!-- Eventos recentes -->
+            <div class="painel">
+
+                <h2>Eventos Recentes</h2>
+
+                <div class="evento">
+                    <div class="evento-info">
+                        <span class="evento-titulo">Tentativa de acesso bloqueada</span>
+                        <span class="evento-hora">Hoje, 14:32</span>
+                    </div>
+                    <span class="tag tag-erro">Bloqueado</span>
+                </div>
+
+                <div class="evento">
+                    <div class="evento-info">
+                        <span class="evento-titulo">Varredura de vulnerabilidades concluída</span>
+                        <span class="evento-hora">Hoje, 11:00</span>
+                    </div>
+                    <span class="tag tag-aviso">1 alerta</span>
+                </div>
+
+                <div class="evento">
+                    <div class="evento-info">
+                        <span class="evento-titulo">Backup automático realizado</span>
+                        <span class="evento-hora">Hoje, 03:00</span>
+                    </div>
+                    <span class="tag tag-ok">Concluído</span>
+                </div>
+
+                <div class="evento">
+                    <div class="evento-info">
+                        <span class="evento-titulo">Atualização de firewall aplicada</span>
+                        <span class="evento-hora">Ontem, 22:15</span>
+                    </div>
+                    <span class="tag tag-ok">Concluído</span>
+                </div>
+
+                <div class="evento">
+                    <div class="evento-info">
+                        <span class="evento-titulo">Login de novo dispositivo detectado</span>
+                        <span class="evento-hora">Ontem, 18:44</span>
+                    </div>
+                    <span class="tag tag-aviso">Revisado</span>
+                </div>
+
+            </div>
+
+            <!-- Cobertura por área -->
+            <div class="painel">
+
+                <h2>Cobertura por Área</h2>
+
+                <div class="barra-linha">
+
+                    <div class="barra-item">
+                        <div class="barra-label">
+                            <span>Rede interna</span>
+                            <span class="verde">98%</span>
+                        </div>
+                        <div class="barra-fundo">
+                            <div class="barra-progresso" style="width:98%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="barra-item">
+                        <div class="barra-label">
+                            <span>Endpoints</span>
+                            <span class="verde">91%</span>
+                        </div>
+                        <div class="barra-fundo">
+                            <div class="barra-progresso" style="width:91%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="barra-item">
+                        <div class="barra-label">
+                            <span>E-mail corporativo</span>
+                            <span class="azul">85%</span>
+                        </div>
+                        <div class="barra-fundo">
+                            <div class="barra-progresso" style="width:85%; background:#00c3ff;"></div>
+                        </div>
+                    </div>
+
+                    <div class="barra-item">
+                        <div class="barra-label">
+                            <span>Aplicações web</span>
+                            <span class="amarelo">76%</span>
+                        </div>
+                        <div class="barra-fundo">
+                            <div class="barra-progresso" style="width:76%; background:#f59e0b;"></div>
+                        </div>
+                    </div>
+
+                    <div class="barra-item">
+                        <div class="barra-label">
+                            <span>Armazenamento em nuvem</span>
+                            <span class="verde">100%</span>
+                        </div>
+                        <div class="barra-fundo">
+                            <div class="barra-progresso" style="width:100%;"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+
+        CyberShield © 2026
+
+    </footer>
+
+    <script>
+
+        const sessao =
+            JSON.parse(
+                localStorage.getItem("usuarioLogado")
+            );
+
+        if (!sessao) {
+
+            window.location = "login.html";
+
+        }
+
+        document.getElementById("nomeUsuario").innerText =
+            sessao.nome;
+
+        // Exibe o banner de aviso (simula 1 vulnerabilidade aberta)
+        document.getElementById("avisoBanner").style.display =
+            "flex";
+
+    </script>
+
+</body>
+
+</html>
